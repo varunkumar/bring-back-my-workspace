@@ -4,6 +4,7 @@ let scene;
 let audioElements = [];
 let soundSources = [];
 let connection;
+let roomData;
 let visualElements = [
   {
     icon: 'listenerIcon',
@@ -108,10 +109,16 @@ function updatePositions(elements) {
   }
 }
 
+function findUserPosition(userId) {
+  if (roomData && roomData.sources && roomData.sources.length > 0) {
+  }
+  return -1;
+}
+
 /**
  * @private
  */
-function initAudioStream(roomId, roomData, userid) {
+function initAudioStream(roomId) {
   connection = new RTCMultiConnection();
 
   connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
@@ -121,14 +128,14 @@ function initAudioStream(roomId, roomData, userid) {
     audio: true,
     video: false,
   };
-  if (! userid) {
+  if (!userid) {
     connection.userid = prompt('Please enter your name', 'Harry Potter');
   } else {
     connection.userid = userid;
   }
 
   if (roomData) {
-    connection.extra = { name: roomData };
+    connection.extra = { roomData: encodeURI(JSON.stringify(roomData)) };
   }
 
   connection.mediaConstraints = {
@@ -152,32 +159,7 @@ function initAudioStream(roomId, roomData, userid) {
     },
   ];
 
-  connection.onstream = function (event) {
-    var mediaElement = getHTMLMediaElement(event.mediaElement, {
-      title: event.userid,
-      buttons: ['full-screen'],
-      width: 50,
-      showOnMouseEnter: false,
-    });
-
-    if (event.type != 'local') {
-      // Add resonance code
-      const audioStreamSource = audioContext.createMediaStreamSource(
-        event.stream
-      );
-      const soundSource = scene.createSource();
-      soundSources.push(soundSource);
-      audioStreamSource.connect(soundSource.input);
-    }
-
-    setTimeout(function () {
-      mediaElement.media.play();
-    }, 5000);
-
-    mediaElement.id = event.streamid;
-  };
-
-  connection.onstreamended = function (event) {
+  connection.onstream = connection.onstreamended = function (event) {
     var mediaElement = document.getElementById(event.streamid);
     if (mediaElement) {
       mediaElement.parentNode.removeChild(mediaElement);
@@ -187,6 +169,43 @@ function initAudioStream(roomId, roomData, userid) {
   connection.openOrJoin(roomId, function () {
     console.log(connection.sessionid);
   });
+}
+
+function addStream(event) {
+  var mediaElement = getHTMLMediaElement(event.mediaElement, {
+    title: event.userid,
+    buttons: ['full-screen'],
+    width: 50,
+    showOnMouseEnter: false,
+  });
+
+  if (event.type != 'local') {
+    // Add resonance code
+    const audioStreamSource = audioContext.createMediaStreamSource(
+      event.stream
+    );
+    const soundSource = scene.createSource();
+    soundSources.splice(0, 0, soundSource);
+    audioStreamSource.connect(soundSource.input);
+
+    const visualElement = {
+      icon: 'microphoneIcon',
+      x: 0.25,
+      y: 0.25,
+      radius: 0.04,
+      alpha: 0.75,
+      clickable: true,
+    };
+
+    visualElements.splice(0, 0, visualElement);
+    canvasControl.setElements(visualElements);
+  }
+
+  setTimeout(function () {
+    mediaElement.media.play();
+  }, 5000);
+
+  mediaElement.id = event.streamid;
 }
 
 function addSource() {
@@ -227,34 +246,12 @@ function addSource() {
  */
 function initAudio() {
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
-  /*let audioSources = [
-    './virtual-room/static/audio/sample.wav',
-    './virtual-room/static/audio/sample.wav',
-    './virtual-room/static/audio/sample.wav',
-  ];
-  let audioElementSources = [];
-  for (let i = 0; i < audioSources.length; i++) {
-    audioElements[i] = document.createElement('audio');
-    audioElements[i].src = audioSources[i];
-    audioElements[i].crossOrigin = 'anonymous';
-    audioElements[i].load();
-    audioElements[i].loop = true;
-    audioElementSources[i] = audioContext.createMediaElementSource(
-      audioElements[i]
-    );
-  }*/
 
   // Initialize scene and create Source(s).
   scene = new ResonanceAudio(audioContext, {
     ambisonicOrder: 1,
   });
-  /*for (let i = 0; i < audioElementSources.length; i++) {
-    soundSources[i] = scene.createSource();
-    audioElementSources[i].connect(soundSources[i].input);
-  }*/
   scene.output.connect(audioContext.destination);
-
-  //initAudioStream(scene);
   audioReady = true;
 }
 
@@ -263,12 +260,12 @@ let onLoad = function () {
     addSource();
   });
 
-  $('#joinRoomButton').on("click", function(e) {
-    console.log("Button clicked");
+  $('#joinRoomButton').on('click', function (e) {
+    console.log('Button clicked');
     const room = $('#roomIdToJoin').val();
     const userId = $('#userIdToJoinRoom').val();
     $('#joinRoomModal').modal('hide');
-    $('#roomIdSelectedToJoin').html("<span>" + room + ":" + userId + "</span>");
+    $('#roomIdSelectedToJoin').html('<span>' + room + ':' + userId + '</span>');
     e.preventDefault();
     initAudioStream(room, null, userId);
     document.querySelector('#btnJoin').setAttribute('disabled', true);
@@ -280,15 +277,14 @@ let onLoad = function () {
     .addEventListener('click', function (event) {
       document.querySelector('#btnJoin').setAttribute('disabled', true);
       document.querySelector('#btnCreate').setAttribute('disabled', true);
-      const roomData = {
-        rm: 'varun-test',
+      roomData = {
+        roomId: prompt('Enter room id', 'varun-test'),
         sources: [
-          { x: 100, y: 100 },
-          { x: 150, y: 150 },
+          { x: 0.75, y: 0.75, userId: 'Varun' },
+          { x: 0.75, y: 0.25, userId: 'Sreekanth' },
         ],
       };
-      let data = encodeURI(JSON.stringify(roomData));
-      initAudioStream(roomData.rm, data);
+      initAudioStream(roomData.roomId);
     });
 
   let canvas = document.getElementById('canvas');
