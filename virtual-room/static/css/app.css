@@ -91,3 +91,14 @@ body {
   padding: 0px;
   margin-right: 0px;
 }
+
+.fa {
+  font-size: 24px;
+  margin-right: 2px;
+  cursor: pointer;
+}
+
+.highlight {
+  color: red;
+  font-style: italic;
+}

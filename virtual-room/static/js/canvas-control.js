@@ -117,8 +117,8 @@ CanvasControl.prototype.draw = function () {
         icon,
         x,
         y,
-        radiusInPixels * 2,
-        radiusInPixels * 2
+        radiusInPixels * 0.5,
+        radiusInPixels * 0.5
       );
     }
   }

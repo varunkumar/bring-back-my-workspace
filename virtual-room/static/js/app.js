@@ -75,7 +75,6 @@ let dimensionSelection = 'small';
 let materialSelection = 'brick';
 let audioReady = false;
 
-
 class User {
   constructor(userId) {
     this.userId = userId;
@@ -83,8 +82,7 @@ class User {
     this.x = 0.25;
     this.y = 0.75;
     this.radius = 0.04;
-    this.alpha = 0.75,
-    this.clickable = true;
+    (this.alpha = 0.75), (this.clickable = true);
   }
 
   setActive(status) {
@@ -94,7 +92,7 @@ class User {
 
 class Room {
   constructor(id, users) {
-    this.id = id
+    this.id = id;
     this.users = users;
   }
 
@@ -105,7 +103,7 @@ class Room {
 
   getUsers() {
     return this.users;
-  }  
+  }
 }
 
 let room;
@@ -154,7 +152,7 @@ function findUserPosition(userId) {
 /**
  * @private
  */
-function initAudioStream(roomId) {
+function initAudioStream(roomId, userId) {
   connection = new RTCMultiConnection();
 
   connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
@@ -165,13 +163,9 @@ function initAudioStream(roomId) {
     video: false,
   };
 
-  if (!userid) {
-    connection.userid = prompt('Please enter your name', 'Harry Potter');
-  } else {
-    connection.userid = userid;
-  }
+  connection.userid = userId;
 
-  if (roomData) {
+  if (roomData && roomData.id === roomId) {
     connection.extra = { roomData: encodeURI(JSON.stringify(roomData)) };
   }
 
@@ -196,13 +190,8 @@ function initAudioStream(roomId) {
     },
   ];
 
-  connection.onstream = connection.onstreamended = function (event) {
-    var mediaElement = document.getElementById(event.streamid);
-    if (mediaElement) {
-      mediaElement.parentNode.removeChild(mediaElement);
-    }
-  };
-
+  connection.onstream = addStream;
+  connection.onstreamended = removeStream;
   connection.openOrJoin(roomId, function () {
     console.log(connection.sessionid);
   });
@@ -243,6 +232,13 @@ function addStream(event) {
   }, 5000);
 
   mediaElement.id = event.streamid;
+}
+
+function removeStream(event) {
+  const mediaElement = document.getElementById(event.streamid);
+  if (mediaElement) {
+    mediaElement.parentNode.removeChild(mediaElement);
+  }
 }
 
 function addSource() {
@@ -293,74 +289,61 @@ function initAudio() {
 }
 
 let onLoad = function () {
-
   // document.getElementById('btnAdd').addEventListener('click', function (event) {
   //   addSource();
   // });
 
-  $('#createRoomButton').on("click", function(e) {
+  $('#createRoomButton').on('click', function (e) {
     const roomId = $('#roomIdToCreate').val();
     room = new Room(roomId, users);
-    $('#rooIdToAddUsers').html("<b>" + roomId + "</b>");
+    $('#rooIdToAddUsers').html(roomId);
     $('#btnCreate').hide();
     $('#btnJoin').hide();
     $('#saveRoomDiv').show();
     $('#createRoomModal').modal('hide');
-    $('#roomIdToCreate').val("");
+    $('#roomIdToCreate').val('');
     e.preventDefault();
   });
 
-  $('#addUserToRoomButton').on("click", function(e) {
+  $('#addUserToRoomButton').on('click', function (e) {
     const userId = $('#userIdOfTheRoom').val();
-    $('#userIdOfTheRoom').val("");
+    $('#userIdOfTheRoom').val('');
     room.addUserToRoom(new User(userId));
     $('#addUserToRoomModal').modal('hide');
     canvasControl.draw();
   });
 
-  $('#joinRoomButton').on("click", function(e) {
-    const room = $('#roomIdToJoin').val();
+  $('#joinRoomButton').on('click', function (e) {
+    const roomId = $('#roomIdToJoin').val();
     const userId = $('#userIdToJoinRoom').val();
     $('#joinRoomModal').modal('hide');
-    $('#roomIdSelectedToJoin').html('<span>' + room + ':' + userId + '</span>');
+    $('#roomIdSelectedToJoin')
+      .html(
+        `You have joined <span class="highlight">${roomId}</span> as <span class="highlight">${userId}</span>`
+      )
+      .show();
     e.preventDefault();
-    initAudioStream(room, null, userId);
+    initAudioStream(roomId, userId);
     document.querySelector('#btnJoin').setAttribute('disabled', true);
     document.querySelector('#btnCreate').setAttribute('disabled', true);
   });
 
-
-  $('#btnSaveRoom').on("click", function(e) {
+  $('#btnSaveRoom').on('click', function (e) {
     $('#btnCreate').show();
     $('#btnJoin').show();
     $('#saveRoomDiv').hide();
-    var roomData = JSON.stringify(room);
-    console.log(roomData);
-    initAudioStream(roomData.id)
+    roomData = room;
+    $('#roomIdSelectedToJoin').html('Room saved successfully!!').show();
+    setTimeout(function () {
+      $('#roomIdSelectedToJoin').html('').hide();
+    }, 5000);
   });
 
-  $('btnCancelSaveOperation').on("click", function(e) {
+  $('#btnCancelSaveOperation').on('click', function (e) {
     $('#btnCreate').show();
     $('#btnJoin').show();
     $('#saveRoomDiv').hide();
   });
-
-
-  // document
-  //   .getElementById('btnCreate')
-  //   .addEventListener('click', function (event) {
-  //     document.querySelector('#btnJoin').setAttribute('disabled', true);
-  //     document.querySelector('#btnCreate').setAttribute('disabled', true);
-  //     const roomData = {
-  //       rm: 'varun-test',
-  //       sources: [
-  //         { x: 100, y: 100 },
-  //         { x: 150, y: 150 },
-  //       ],
-  //     };
-  //     let data = encodeURI(JSON.stringify(roomData));
-  //     initAudioStream(roomData.rm, data);
-  //   });
 
   let canvas = document.getElementById('canvas');
   canvasControl = new CanvasControl(canvas, users, updatePositions);
