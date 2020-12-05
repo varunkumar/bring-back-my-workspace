@@ -292,6 +292,7 @@ let onLoad = function () {
       .show();
     e.preventDefault();
     roomData = JSON.parse(localStorage.getItem(roomId));
+    initAudio();
     initAudioStream(roomId, userId);
     document.querySelector('#btnJoin').setAttribute('disabled', true);
     document.querySelector('#btnCreate').setAttribute('disabled', true);
@@ -319,6 +320,5 @@ let onLoad = function () {
   canvasControl = new CanvasControl(canvas, users, updatePositions);
 
   selectRoomProperties();
-  initAudio();
 };
 window.addEventListener('load', onLoad);
