@@ -261,10 +261,6 @@ function initAudio() {
 }
 
 let onLoad = function () {
-  // document.getElementById('btnAdd').addEventListener('click', function (event) {
-  //   addSource();
-  // });
-
   $('#createRoomButton').on('click', function (e) {
     const roomId = $('#roomIdToCreate').val();
     room = new Room(roomId, users);
@@ -323,5 +319,6 @@ let onLoad = function () {
   canvasControl = new CanvasControl(canvas, users, updatePositions);
 
   selectRoomProperties();
+  initAudio();
 };
 window.addEventListener('load', onLoad);
