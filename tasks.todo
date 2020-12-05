@@ -4,6 +4,10 @@ Performance:
 Features:
   ☐ Allow movement within the room
   ☐ Extract roomid from the URL
+  ☐ Speaker indication
+  ☐ User info on hover
+  ☐ Add more layouts
+  ☐ Add support for rotating users
 
 Cosmetic:
   ✔ Logo @done(20-12-05 19:18)
