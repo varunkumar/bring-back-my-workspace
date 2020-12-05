@@ -4,9 +4,10 @@
  * @param {Object} elements
  * @param {Function} callbackFunc
  */
-function CanvasControl(canvas, elements, callbackFunc) {
+function CanvasControl(canvas, elements, backgroundImg, callbackFunc) {
   this._canvas = canvas;
   this._elements = elements;
+  this._backgroundImg = backgroundImg;
   this._callbackFunc = callbackFunc;
 
   this._context = this._canvas.getContext('2d');
@@ -102,7 +103,7 @@ CanvasControl.prototype.draw = function () {
   this._context.strokeStyle = '#bbb';
   this._context.strokeRect(0, 0, canvas.width, canvas.height);
 
-  let icon = document.getElementById('layout');
+  let icon = document.getElementById(this._backgroundImg.id);
   this._context.drawImage(icon, 0, 0, 800 * 1.5, 420 * 1.5);
 
   for (let i = 0; i < this._elements.length; i++) {

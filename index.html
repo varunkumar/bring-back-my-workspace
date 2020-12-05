@@ -206,6 +206,14 @@
       style="display: none"
     />
 
+    <img
+      src="./virtual-room/static/img/cafeteria.jpg"
+      class="icon"
+      alt="source"
+      id="cafeteriaLayout"
+      style="display: none"
+    />
+
     <script src="./virtual-room/static/js/resonance-audio/resonance-audio.min.js"></script>
     <script src="./virtual-room/static/js/app.js"></script>
     <script src="./virtual-room/static/js/canvas-control.js"></script>
@@ -298,6 +306,13 @@
                 id="roomIdToCreate"
                 value="lunch-gang"
               />
+            </div>
+            <div class="form-group">
+              <label for="roomLayout">Select Layout</label>
+              <select class="form-control" id="roomLayout">
+                <option value="layout">Workstations</option>
+                <option value="cafeteriaLayout">Cafeteria</option>
+              </select>
             </div>
           </div>
           <div class="modal-footer">

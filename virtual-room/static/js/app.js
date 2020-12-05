@@ -80,8 +80,9 @@ class User {
 }
 
 class Room {
-  constructor(id, users) {
+  constructor(id, layout, users) {
     this.id = id;
+    this.layout = layout;
     this.users = users;
   }
 
@@ -97,6 +98,11 @@ class Room {
 
 let room;
 let users = [];
+
+let backgroundImg = {
+  "id": "layout"
+};
+
 
 /**
  * @private
@@ -268,7 +274,8 @@ function initAudio() {
 let onLoad = function () {
   $('#createRoomButton').on('click', function (e) {
     const roomId = $('#roomIdToCreate').val();
-    room = new Room(roomId, users);
+    const layout = $('#roomLayout').val()
+    room = new Room(roomId, layout, users);
     $('#rooIdToAddUsers').html(roomId);
     $('#btnCreate').hide();
     $('#btnJoin').hide();
@@ -276,6 +283,8 @@ let onLoad = function () {
     $('#createRoomModal').modal('hide');
     $('#roomIdToCreate').val('');
     e.preventDefault();
+    backgroundImg.id = layout;
+    canvasControl.draw();
   });
 
   $('#addUserToRoomButton').on('click', function (e) {
@@ -322,7 +331,7 @@ let onLoad = function () {
   });
 
   let canvas = document.getElementById('canvas');
-  canvasControl = new CanvasControl(canvas, users, updatePositions);
+  canvasControl = new CanvasControl(canvas, users, backgroundImg, updatePositions);
 
   selectRoomProperties();
 };
