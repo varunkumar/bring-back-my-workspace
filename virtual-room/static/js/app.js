@@ -3,6 +3,7 @@ let canvasControl;
 let scene;
 let audioElements = [];
 let soundSources = [];
+let connection;
 let visualElements = [
   {
     icon: 'listenerIcon',
@@ -108,12 +109,10 @@ function updatePositions(elements) {
 }
 
 /**
- *
- * @param {Object} scene
  * @private
  */
-function initAudioStream(scene) {
-  let connection = new RTCMultiConnection();
+function initAudioStream(roomId, roomData) {
+  connection = new RTCMultiConnection();
 
   connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
   connection.socketMessageEvent = 'bring-back-my-workspace';
@@ -122,6 +121,10 @@ function initAudioStream(scene) {
     audio: true,
     video: false,
   };
+  connection.userid = prompt('Please enter your name', 'Harry Potter');
+  if (roomData) {
+    connection.extra = { name: roomData };
+  }
 
   connection.mediaConstraints = {
     audio: true,
@@ -176,7 +179,7 @@ function initAudioStream(scene) {
     }
   };
 
-  connection.openOrJoin('test-varun', function () {
+  connection.openOrJoin(roomId, function () {
     console.log(connection.sessionid);
   });
 }
@@ -266,6 +269,31 @@ let onLoad = function () {
   document.getElementById('btnAdd').addEventListener('click', function (event) {
     addSource();
   });
+
+  document
+    .getElementById('btnJoin')
+    .addEventListener('click', function (event) {
+      document.querySelector('#btnJoin').setAttribute('disabled', true);
+      document.querySelector('#btnCreate').setAttribute('disabled', true);
+      const room = prompt('Enter room id', 'varun-test');
+      initAudioStream(room);
+    });
+
+  document
+    .getElementById('btnCreate')
+    .addEventListener('click', function (event) {
+      document.querySelector('#btnJoin').setAttribute('disabled', true);
+      document.querySelector('#btnCreate').setAttribute('disabled', true);
+      const roomData = {
+        rm: 'varun-test',
+        sources: [
+          { x: 100, y: 100 },
+          { x: 150, y: 150 },
+        ],
+      };
+      let data = encodeURI(JSON.stringify(roomData));
+      initAudioStream(roomData.rm, data);
+    });
 
   let canvas = document.getElementById('canvas');
   canvasControl = new CanvasControl(canvas, visualElements, updatePositions);
