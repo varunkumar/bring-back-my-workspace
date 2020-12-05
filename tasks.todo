@@ -1,6 +1,10 @@
 Performance:
   ☐ Compress JS
 
+Features:
+  ☐ Allow movement within the room
+  ☐ Extract roomid from the URL
+
 Cosmetic:
-  ☐ Logo
+  ✔ Logo @done(20-12-05 19:18)
   ☐ Presentation
