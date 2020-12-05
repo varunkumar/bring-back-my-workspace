@@ -1,7 +1,7 @@
 let audioContext;
 let canvasControl;
 let scene;
-let soundSources = [];
+let soundSourcesMap = [];
 let connection;
 let roomData;
 let dimensions = {
@@ -127,7 +127,7 @@ function updatePositions(users) {
     if (users[i].userId === connection.userid) {
       scene.setListenerPosition(x, y, z);
     } else {
-      soundSources[i].setPosition(x, y, z);
+      soundSourcesMap[users[i].userId].setPosition(x, y, z);
     }
   }
 }
@@ -196,16 +196,17 @@ function addStream(event) {
     canvasControl.draw();
 
     // Create sound sources (excluding the current user - listener)
-    soundSources = [];
-    for (let i = 0; i < users.length - 1; i++) {
-      const soundSource = scene.createSource();
-      soundSources.push(soundSource);
+    soundSourcesMap = {};
+    for (let i = 0; i < users.length; i++) {
+      if (users[i].userId !== connection.userid) {
+        const soundSource = scene.createSource();
+        soundSourcesMap[users[i].userId].push(soundSource);
+      }
     }
 
     // Connect existing streams
     for (var userId of Object.keys(audioStreamSourcesMap)) {
-      const index = users.findIndex((user) => user.userId === userId);
-      audioStreamSourcesMap[userId].connect(soundSources[index].input);
+      audioStreamSourcesMap[userId].connect(soundSourcesMap[userId].input);
     }
 
     isRoomLoaded = true;
@@ -225,9 +226,8 @@ function addStream(event) {
     );
     audioStreamSourcesMap[event.userid] = audioStreamSource;
 
-    const index = users.findIndex((user) => user.userId === event.userid);
     if (isRoomLoaded) {
-      audioStreamSource.connect(soundSources[index].input);
+      audioStreamSource.connect(soundSourcesMap[event.userid].input);
     }
   }
 
