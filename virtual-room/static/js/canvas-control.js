@@ -112,12 +112,15 @@ CanvasControl.prototype.draw = function () {
       let x = this._elements[i].x * this._canvas.width - radiusInPixels;
       let y = this._elements[i].y * this._canvas.height - radiusInPixels;
       this._context.globalAlpha = this._elements[i].alpha;
+      if (this._selected.index === i) {
+        this._context.fillText('Varun', x, y);
+      }
       this._context.drawImage(
         icon,
         x,
         y,
-        radiusInPixels * 0.5,
-        radiusInPixels * 0.5
+        radiusInPixels * 2,
+        radiusInPixels * 2
       );
     }
   }
@@ -203,6 +206,7 @@ CanvasControl.prototype._cursorUpFunc = function (event) {
   document.body.style = '';
 };
 
+let prevSelected = -1;
 CanvasControl.prototype._cursorMoveFunc = function (event) {
   let cursorPosition = this.getCursorPosition(event);
   let selection = this.getNearestElement(cursorPosition);
@@ -211,9 +215,21 @@ CanvasControl.prototype._cursorMoveFunc = function (event) {
   }
   if (selection.index > -1) {
     this._canvas.style.cursor = 'pointer';
+
+    if (prevSelected != selection.index) {
+      this._selected = selection;
+      this.draw();
+    }
+    prevSelected = selection.index;
     return true;
   } else {
     this._canvas.style.cursor = 'default';
+
+    if (prevSelected != selection.index) {
+      this._selected.index = -1;
+      this.draw();
+    }
+    prevSelected = selection.index;
     return false;
   }
 };
