@@ -200,7 +200,7 @@ function addStream(event) {
     for (let i = 0; i < users.length; i++) {
       if (users[i].userId !== connection.userid) {
         const soundSource = scene.createSource();
-        soundSourcesMap[users[i].userId].push(soundSource);
+        soundSourcesMap[users[i].userId] = soundSource;
       }
     }
 
