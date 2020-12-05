@@ -75,6 +75,42 @@ let dimensionSelection = 'small';
 let materialSelection = 'brick';
 let audioReady = false;
 
+
+class User {
+  constructor(userId) {
+    this.userId = userId;
+    this.active = false;
+    this.x = 0.25;
+    this.y = 0.75;
+    this.radius = 0.04;
+    this.alpha = 0.75,
+    this.clickable = true;
+  }
+
+  setActive(status) {
+    this.active = status;
+  }
+}
+
+class Room {
+  constructor(id, users) {
+    this.id = id
+    this.users = users;
+  }
+
+  addUserToRoom(user) {
+    this.users.push(user);
+    return true;
+  }
+
+  getUsers() {
+    return this.users;
+  }  
+}
+
+let room;
+let users = [];
+
 /**
  * @private
  */
@@ -128,6 +164,7 @@ function initAudioStream(roomId) {
     audio: true,
     video: false,
   };
+
   if (!userid) {
     connection.userid = prompt('Please enter your name', 'Harry Potter');
   } else {
@@ -256,12 +293,32 @@ function initAudio() {
 }
 
 let onLoad = function () {
-  document.getElementById('btnAdd').addEventListener('click', function (event) {
-    addSource();
+
+  // document.getElementById('btnAdd').addEventListener('click', function (event) {
+  //   addSource();
+  // });
+
+  $('#createRoomButton').on("click", function(e) {
+    const roomId = $('#roomIdToCreate').val();
+    room = new Room(roomId, users);
+    $('#rooIdToAddUsers').html("<b>" + roomId + "</b>");
+    $('#btnCreate').hide();
+    $('#btnJoin').hide();
+    $('#saveRoomDiv').show();
+    $('#createRoomModal').modal('hide');
+    $('#roomIdToCreate').val("");
+    e.preventDefault();
   });
 
-  $('#joinRoomButton').on('click', function (e) {
-    console.log('Button clicked');
+  $('#addUserToRoomButton').on("click", function(e) {
+    const userId = $('#userIdOfTheRoom').val();
+    $('#userIdOfTheRoom').val("");
+    room.addUserToRoom(new User(userId));
+    $('#addUserToRoomModal').modal('hide');
+    canvasControl.draw();
+  });
+
+  $('#joinRoomButton').on("click", function(e) {
     const room = $('#roomIdToJoin').val();
     const userId = $('#userIdToJoinRoom').val();
     $('#joinRoomModal').modal('hide');
@@ -272,23 +329,41 @@ let onLoad = function () {
     document.querySelector('#btnCreate').setAttribute('disabled', true);
   });
 
-  document
-    .getElementById('btnCreate')
-    .addEventListener('click', function (event) {
-      document.querySelector('#btnJoin').setAttribute('disabled', true);
-      document.querySelector('#btnCreate').setAttribute('disabled', true);
-      roomData = {
-        roomId: prompt('Enter room id', 'varun-test'),
-        sources: [
-          { x: 0.75, y: 0.75, userId: 'Varun' },
-          { x: 0.75, y: 0.25, userId: 'Sreekanth' },
-        ],
-      };
-      initAudioStream(roomData.roomId);
-    });
+
+  $('#btnSaveRoom').on("click", function(e) {
+    $('#btnCreate').show();
+    $('#btnJoin').show();
+    $('#saveRoomDiv').hide();
+    var roomData = JSON.stringify(room);
+    console.log(roomData);
+    initAudioStream(roomData.id)
+  });
+
+  $('btnCancelSaveOperation').on("click", function(e) {
+    $('#btnCreate').show();
+    $('#btnJoin').show();
+    $('#saveRoomDiv').hide();
+  });
+
+
+  // document
+  //   .getElementById('btnCreate')
+  //   .addEventListener('click', function (event) {
+  //     document.querySelector('#btnJoin').setAttribute('disabled', true);
+  //     document.querySelector('#btnCreate').setAttribute('disabled', true);
+  //     const roomData = {
+  //       rm: 'varun-test',
+  //       sources: [
+  //         { x: 100, y: 100 },
+  //         { x: 150, y: 150 },
+  //       ],
+  //     };
+  //     let data = encodeURI(JSON.stringify(roomData));
+  //     initAudioStream(roomData.rm, data);
+  //   });
 
   let canvas = document.getElementById('canvas');
-  canvasControl = new CanvasControl(canvas, visualElements, updatePositions);
+  canvasControl = new CanvasControl(canvas, users, updatePositions);
 
   selectRoomProperties();
 };

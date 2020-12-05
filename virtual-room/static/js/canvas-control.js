@@ -106,15 +106,13 @@ CanvasControl.prototype.draw = function () {
   this._context.drawImage(icon, 0, 0, 800 * 1.5, 420 * 1.5);
 
   for (let i = 0; i < this._elements.length; i++) {
-    let icon = document.getElementById(this._elements[i].icon);
+    let icon = document.getElementById('listenerIcon');
     if (icon !== undefined) {
       let radiusInPixels = this._elements[i].radius * this._canvas.width;
       let x = this._elements[i].x * this._canvas.width - radiusInPixels;
       let y = this._elements[i].y * this._canvas.height - radiusInPixels;
       this._context.globalAlpha = this._elements[i].alpha;
-      if (this._selected.index === i) {
-        this._context.fillText('Varun', x, y);
-      }
+      this._context.fillText(this._elements[i].userId, x - 3, y - 5);
       this._context.drawImage(
         icon,
         x,
