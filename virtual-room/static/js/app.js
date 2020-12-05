@@ -200,6 +200,7 @@ function addStream(event) {
   // Has room data?
   if (event.extra && event.extra.roomData) {
     roomData = JSON.parse(decodeURI(event.extra.roomData));
+    backgroundImg.id = roomData.layout;
     users.splice(0, users.length, ...roomData.users);
     canvasControl.draw();
 
