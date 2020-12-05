@@ -254,18 +254,6 @@ function initAudio() {
 }
 
 let onLoad = function () {
-  document
-    .getElementById('roomDimensionsSelect')
-    .addEventListener('change', function (event) {
-      selectRoomProperties();
-    });
-
-  document
-    .getElementById('roomMaterialsSelect')
-    .addEventListener('change', function (event) {
-      selectRoomProperties();
-    });
-
   document.getElementById('btnAdd').addEventListener('click', function (event) {
     addSource();
   });

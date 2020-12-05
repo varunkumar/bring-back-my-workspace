@@ -1,5 +1,12 @@
-* {
-  font-family: 'Open Sans', sans-serif;
+body {
+  background: rgb(14, 30, 37);
+  color: #ccc;
+}
+
+.header-title {
+  text-shadow: 3px 4px 7px #0e1e25;
+  color: #96c5da;
+  font-family: 'Amatic SC', cursive;
 }
 
 .icon {

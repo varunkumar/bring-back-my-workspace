@@ -90,8 +90,8 @@ CanvasControl.prototype.resize = function () {
   if (canvasWidth > maxCanvasSize) {
     canvasWidth = maxCanvasSize;
   }
-  this._canvas.width = canvasWidth;
-  this._canvas.height = canvasWidth;
+  this._canvas.width = 800 * 1.5;
+  this._canvas.height = 420 * 1.5;
 };
 
 CanvasControl.prototype.draw = function () {
@@ -101,6 +101,9 @@ CanvasControl.prototype.draw = function () {
   this._context.lineWidth = 5;
   this._context.strokeStyle = '#bbb';
   this._context.strokeRect(0, 0, canvas.width, canvas.height);
+
+  let icon = document.getElementById('layout');
+  this._context.drawImage(icon, 0, 0, 800 * 1.5, 420 * 1.5);
 
   for (let i = 0; i < this._elements.length; i++) {
     let icon = document.getElementById(this._elements[i].icon);

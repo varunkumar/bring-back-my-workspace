@@ -15,7 +15,7 @@
     />
     <link rel="stylesheet" href="./virtual-room/static/css/app.css" />
     <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans"
+      href="https://fonts.googleapis.com/css?family=Amatic+SC:wght@700&display=swap"
       rel="stylesheet"
     />
 
@@ -26,41 +26,18 @@
       <a class="navbar-brand" href="index.html">
         <img
           src="./virtual-room/static/img/logo.png"
-          width="30"
-          height="30"
+          width="50"
+          height="50"
           class="d-inline-block align-top"
         />
       </a>
-      Bring back my workspace
+      <h1 class="header-title">Bring back my workspace</h1>
     </nav>
 
     <div class="container mt-5">
       <div class="row justify-content-center">
         <div class="col-lg-12 mb-2">
-          <h1>My workspace</h1>
           <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="roomDimensionsSelect" class="col-form-label"
-                >Room Dimensions</label
-              >
-              <select id="roomDimensionsSelect" class="form-control">
-                <option value="small" selected>Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-                <option value="huge">Huge</option>
-              </select>
-            </div>
-            <div class="form-group col-md-6">
-              <label for="roomMaterialsSelect" class="col-form-label"
-                >Wall Materials</label
-              >
-              <select id="roomMaterialsSelect" class="form-control">
-                <option value="brick" selected>Brick</option>
-                <option value="curtains">Curtains</option>
-                <option value="marble">Marble</option>
-                <option value="outside">Outdoors</option>
-              </select>
-            </div>
             <div><button id="btnAdd">Add source</button></div>
             <div><button id="btnCreate">Create</button></div>
             <div><button id="btnJoin">Join</button></div>
@@ -80,7 +57,7 @@
       alt="source"
       id="listenerIcon"
       style="display: none"
-    />,
+    />
 
     <img
       src="./virtual-room/static/img/microphone.svg"
@@ -88,7 +65,15 @@
       alt="source"
       id="microphoneIcon"
       style="display: none"
-    />,
+    />
+
+    <img
+      src="./virtual-room/static/img/layout.jpg"
+      class="icon"
+      alt="source"
+      id="layout"
+      style="display: none"
+    />
 
     <script src="./virtual-room/static/js/resonance-audio/resonance-audio.min.js"></script>
     <script src="./virtual-room/static/js/app.js"></script>
