@@ -182,6 +182,9 @@ function initAudioStream(scene) {
 }
 
 function addSource() {
+  if (!audioReady) {
+    initAudio();
+  }
   console.log('Adding a new source');
   const audioElement = document.createElement('audio');
   audioElement.src = './virtual-room/static/audio/sample.wav';
@@ -194,9 +197,9 @@ function addSource() {
     audioElement
   );
 
-  /*const soundSource = scene.createSource();
+  const soundSource = scene.createSource();
   soundSources.splice(0, 0, soundSource);
-  audioElementSource.connect(soundSource.input);*/
+  audioElementSource.connect(soundSource.input);
 
   const visualElement = {
     icon: 'microphoneIcon',
@@ -248,7 +251,6 @@ function initAudio() {
 }
 
 let onLoad = function () {
-  initAudio();
   document
     .getElementById('roomDimensionsSelect')
     .addEventListener('change', function (event) {
