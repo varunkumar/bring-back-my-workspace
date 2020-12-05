@@ -159,7 +159,9 @@ function initAudioStream(roomId, userId) {
   }
 
   connection.mediaConstraints = {
-    audio: true,
+    audio: {
+      channelCount: 1,
+    },
     video: false,
   };
 
@@ -209,6 +211,8 @@ function addStream(event) {
       audioStreamSourcesMap[userId].connect(soundSourcesMap[userId].input);
     }
 
+    scene.output.connect(audioContext.destination);
+
     isRoomLoaded = true;
   }
 
@@ -232,7 +236,8 @@ function addStream(event) {
   }
 
   setTimeout(function () {
-    mediaElement.media.play();
+    // mediaElement.media.play();
+    mediaElement.muted = true;
   }, 5000);
 
   mediaElement.id = event.streamid;
@@ -254,9 +259,9 @@ function initAudio() {
 
   // Initialize scene and create Source(s).
   scene = new ResonanceAudio(audioContext, {
-    ambisonicOrder: 1,
+    ambisonicOrder: 3,
   });
-  scene.output.connect(audioContext.destination);
+  //scene.output.connect(audioContext.destination);
   audioReady = true;
 }
 
