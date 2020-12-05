@@ -5,10 +5,13 @@ Features:
   ☐ Allow movement within the room
   ☐ Extract roomid from the URL
   ☐ Speaker indication
-  ☐ User info on hover
+  ✔ User info on hover @done(20-12-06 00:17)
   ☐ Add more layouts
-  ☐ Add support for rotating users
+  ☐ Add support for rotating users in 3D space
+  ✔ Store room information on localstorage @done(20-12-06 00:48)
+  ☐ Show user active status
 
 Cosmetic:
   ✔ Logo @done(20-12-05 19:18)
+  ☐ Favicons
   ☐ Presentation

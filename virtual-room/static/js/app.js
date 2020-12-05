@@ -1,20 +1,9 @@
 let audioContext;
 let canvasControl;
 let scene;
-let audioElements = [];
 let soundSources = [];
 let connection;
 let roomData;
-let visualElements = [
-  {
-    icon: 'listenerIcon',
-    x: 0.5,
-    y: 0.5,
-    radius: 0.04,
-    alpha: 0.75,
-    clickable: true,
-  },
-];
 let dimensions = {
   small: {
     width: 1.5,
@@ -125,20 +114,20 @@ function selectRoomProperties() {
 }
 
 /**
- * @param {Object} elements
+ * @param {Object} users
  * @private
  */
-function updatePositions(elements) {
+function updatePositions(users) {
   if (!audioReady) return;
 
-  for (let i = 0; i < elements.length; i++) {
-    let x = ((elements[i].x - 0.5) * dimensions[dimensionSelection].width) / 2;
+  for (let i = 0; i < users.length; i++) {
+    let x = ((users[i].x - 0.5) * dimensions[dimensionSelection].width) / 2;
     let y = 0;
-    let z = ((elements[i].y - 0.5) * dimensions[dimensionSelection].depth) / 2;
-    if (i < elements.length - 1) {
-      soundSources[i].setPosition(x, y, z);
-    } else {
+    let z = ((users[i].y - 0.5) * dimensions[dimensionSelection].depth) / 2;
+    if (users[i].userId === connection.userid) {
       scene.setListenerPosition(x, y, z);
+    } else {
+      soundSources[i].setPosition(x, y, z);
     }
   }
 }
@@ -165,7 +154,7 @@ function initAudioStream(roomId, userId) {
 
   connection.userid = userId;
 
-  if (roomData && roomData.id === roomId) {
+  if (roomData) {
     connection.extra = { roomData: encodeURI(JSON.stringify(roomData)) };
   }
 
@@ -197,7 +186,31 @@ function initAudioStream(roomId, userId) {
   });
 }
 
+let isRoomLoaded = false;
+let audioStreamSourcesMap = {};
 function addStream(event) {
+  // Has room data?
+  if (event.extra && event.extra.roomData) {
+    roomData = JSON.parse(decodeURI(event.extra.roomData));
+    users.splice(0, users.length, ...roomData.users);
+    canvasControl.draw();
+
+    // Create sound sources (excluding the current user - listener)
+    soundSources = [];
+    for (let i = 0; i < users.length - 1; i++) {
+      const soundSource = scene.createSource();
+      soundSources.push(soundSource);
+    }
+
+    // Connect existing streams
+    for (var userId of Object.keys(audioStreamSourcesMap)) {
+      const index = users.findIndex((user) => user.userId === userId);
+      audioStreamSourcesMap[userId].connect(soundSources[index].input);
+    }
+
+    isRoomLoaded = true;
+  }
+
   var mediaElement = getHTMLMediaElement(event.mediaElement, {
     title: event.userid,
     buttons: ['full-screen'],
@@ -210,21 +223,12 @@ function addStream(event) {
     const audioStreamSource = audioContext.createMediaStreamSource(
       event.stream
     );
-    const soundSource = scene.createSource();
-    soundSources.splice(0, 0, soundSource);
-    audioStreamSource.connect(soundSource.input);
+    audioStreamSourcesMap[event.userid] = audioStreamSource;
 
-    const visualElement = {
-      icon: 'microphoneIcon',
-      x: 0.25,
-      y: 0.25,
-      radius: 0.04,
-      alpha: 0.75,
-      clickable: true,
-    };
-
-    visualElements.splice(0, 0, visualElement);
-    canvasControl.setElements(visualElements);
+    const index = users.findIndex((user) => user.userId === event.userid);
+    if (isRoomLoaded) {
+      audioStreamSource.connect(soundSources[index].input);
+    }
   }
 
   setTimeout(function () {
@@ -232,6 +236,7 @@ function addStream(event) {
   }, 5000);
 
   mediaElement.id = event.streamid;
+  updatePositions(users);
 }
 
 function removeStream(event) {
@@ -239,39 +244,6 @@ function removeStream(event) {
   if (mediaElement) {
     mediaElement.parentNode.removeChild(mediaElement);
   }
-}
-
-function addSource() {
-  if (!audioReady) {
-    initAudio();
-  }
-  console.log('Adding a new source');
-  const audioElement = document.createElement('audio');
-  audioElement.src = './virtual-room/static/audio/sample.wav';
-  audioElement.load();
-  audioElement.loop = true;
-  audioElement.setAttribute('controls', true);
-  audioElement.play();
-  audioElements.push(audioElement);
-  const audioElementSource = audioContext.createMediaElementSource(
-    audioElement
-  );
-
-  const soundSource = scene.createSource();
-  soundSources.splice(0, 0, soundSource);
-  audioElementSource.connect(soundSource.input);
-
-  const visualElement = {
-    icon: 'microphoneIcon',
-    x: 0.25,
-    y: 0.25,
-    radius: 0.04,
-    alpha: 0.75,
-    clickable: true,
-  };
-
-  visualElements.splice(0, 0, visualElement);
-  canvasControl.setElements(visualElements);
 }
 
 /**
@@ -323,6 +295,7 @@ let onLoad = function () {
       )
       .show();
     e.preventDefault();
+    roomData = JSON.parse(localStorage.getItem(roomId));
     initAudioStream(roomId, userId);
     document.querySelector('#btnJoin').setAttribute('disabled', true);
     document.querySelector('#btnCreate').setAttribute('disabled', true);
@@ -333,6 +306,7 @@ let onLoad = function () {
     $('#btnJoin').show();
     $('#saveRoomDiv').hide();
     roomData = room;
+    localStorage.setItem(room.id, JSON.stringify(roomData));
     $('#roomIdSelectedToJoin').html('Room saved successfully!!').show();
     setTimeout(function () {
       $('#roomIdSelectedToJoin').html('').hide();
