@@ -22,7 +22,6 @@ Experiments with real-time audio processing in an effort to bring back our works
 ## How to run locally?
 
 ```bash
-cd ..
 npm install -g serve
 serve
 ```

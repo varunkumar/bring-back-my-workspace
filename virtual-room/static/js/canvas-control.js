@@ -199,6 +199,15 @@ CanvasControl.prototype._cursorDownFunc = function (event) {
   this._cursorDown = true;
   let cursorPosition = this.getCursorPosition(event);
   this._selected = this.getNearestElement(cursorPosition);
+  if (this._selected.index > -1) {
+    if (
+      connection &&
+      this._elements[this._selected.index].userId !== connection.userid
+    ) {
+      // Disallow other users to be moved
+      this._selected.index = -1;
+    }
+  }
   this._cursorUpdateFunc(cursorPosition);
   document.body.style = 'overflow: hidden;';
 };
@@ -213,6 +222,15 @@ let prevSelected = -1;
 CanvasControl.prototype._cursorMoveFunc = function (event) {
   let cursorPosition = this.getCursorPosition(event);
   let selection = this.getNearestElement(cursorPosition);
+  if (selection.index > -1) {
+    if (
+      connection &&
+      this._elements[selection.index].userId !== connection.userid
+    ) {
+      // Disallow other users to be moved
+      selection.index = -1;
+    }
+  }
   if (this._cursorDown == true) {
     this._cursorUpdateFunc(cursorPosition);
   }
