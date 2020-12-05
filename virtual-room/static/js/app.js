@@ -111,7 +111,7 @@ function updatePositions(elements) {
 /**
  * @private
  */
-function initAudioStream(roomId, roomData) {
+function initAudioStream(roomId, roomData, userid) {
   connection = new RTCMultiConnection();
 
   connection.socketURL = 'https://rtcmulticonnection.herokuapp.com:443/';
@@ -121,7 +121,12 @@ function initAudioStream(roomId, roomData) {
     audio: true,
     video: false,
   };
-  connection.userid = prompt('Please enter your name', 'Harry Potter');
+  if (! userid) {
+    connection.userid = prompt('Please enter your name', 'Harry Potter');
+  } else {
+    connection.userid = userid;
+  }
+
   if (roomData) {
     connection.extra = { name: roomData };
   }
@@ -258,14 +263,17 @@ let onLoad = function () {
     addSource();
   });
 
-  document
-    .getElementById('btnJoin')
-    .addEventListener('click', function (event) {
-      document.querySelector('#btnJoin').setAttribute('disabled', true);
-      document.querySelector('#btnCreate').setAttribute('disabled', true);
-      const room = prompt('Enter room id', 'varun-test');
-      initAudioStream(room);
-    });
+  $('#joinRoomButton').on("click", function(e) {
+    console.log("Button clicked");
+    const room = $('#roomIdToJoin').val();
+    const userId = $('#userIdToJoinRoom').val();
+    $('#joinRoomModal').modal('hide');
+    $('#roomIdSelectedToJoin').html("<span>" + room + ":" + userId + "</span>");
+    e.preventDefault();
+    initAudioStream(room, null, userId);
+    document.querySelector('#btnJoin').setAttribute('disabled', true);
+    document.querySelector('#btnCreate').setAttribute('disabled', true);
+  });
 
   document
     .getElementById('btnCreate')
