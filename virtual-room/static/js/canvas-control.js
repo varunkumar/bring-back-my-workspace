@@ -112,7 +112,7 @@ CanvasControl.prototype.draw = function () {
       let x = this._elements[i].x * this._canvas.width - radiusInPixels;
       let y = this._elements[i].y * this._canvas.height - radiusInPixels;
       this._context.globalAlpha = this._elements[i].alpha;
-      if (this._elements[i].userId === connection.userid) {
+      if (connection && this._elements[i].userId === connection.userid) {
         // You
         this._context.fillText('You', x - 3, y - 5);
       } else {
