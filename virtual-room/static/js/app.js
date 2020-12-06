@@ -195,7 +195,13 @@ function initAudioStream(roomId, userId) {
       users.splice(data.data.index, 1, data.data.user);
       canvasControl.draw();
     }
-    console.log(`${event.userid} said: ${event.data}`);
+  };
+  connection.onUserStatusChanged = function (event) {
+    const user = users.find((item) => item.userId == event.userid);
+    if (user) {
+      user.active = event.status === 'online';
+      canvasControl.draw();
+    }
   };
   connection.openOrJoin(roomId, function () {
     console.log(connection.sessionid);
@@ -218,12 +224,17 @@ function addStream(event) {
       if (users[i].userId !== connection.userid) {
         const soundSource = scene.createSource();
         soundSourcesMap[users[i].userId] = soundSource;
+        users[i].active = false;
+      } else {
+        users[i].active = true;
       }
     }
 
     // Connect existing streams
     for (var userId of Object.keys(audioStreamSourcesMap)) {
       audioStreamSourcesMap[userId].connect(soundSourcesMap[userId].input);
+      const user = users.find((item) => item.userId == userId);
+      user.active = true;
     }
 
     scene.output.connect(audioContext.destination);
@@ -247,6 +258,8 @@ function addStream(event) {
 
     if (isRoomLoaded) {
       audioStreamSource.connect(soundSourcesMap[event.userid].input);
+      const user = users.find((item) => item.userId == userId);
+      user.active = true;
     }
   }
 

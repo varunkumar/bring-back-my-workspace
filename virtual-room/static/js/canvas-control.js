@@ -113,11 +113,17 @@ CanvasControl.prototype.draw = function () {
       let x = this._elements[i].x * this._canvas.width - radiusInPixels;
       let y = this._elements[i].y * this._canvas.height - radiusInPixels;
       this._context.globalAlpha = this._elements[i].alpha;
+      fillStyle = this._context.fillStyle;
+      if (this._elements[i].active) {
+        this._context.fillStyle = '#00AA00';
+      } else {
+        this._context.fillStyle = '#AA0000';
+      }
       if (connection && this._elements[i].userId === connection.userid) {
         // You
-        this._context.fillText('You', x - 3, y - 5);
+        this._context.fillText('You', x - 3, y - 7);
       } else {
-        this._context.fillText(this._elements[i].userId, x - 3, y - 5);
+        this._context.fillText(this._elements[i].userId, x - 3, y - 7);
       }
       this._context.drawImage(
         icon,
@@ -126,6 +132,8 @@ CanvasControl.prototype.draw = function () {
         radiusInPixels * 0.5,
         radiusInPixels * 0.5
       );
+      this._context.fillRect(x - 2, y - 5, 30, 5);
+      this._context.fillStyle = fillStyle;
     }
   }
 };
