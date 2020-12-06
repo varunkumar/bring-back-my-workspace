@@ -2,7 +2,7 @@
 
 # Bring back my workspace
 
-Experiments with real-time audio processing in an effort to bring back our workspaces https://bringbackmyworkspace.live. This was a hack built at [Arcesium](https://arcesium.com) Hackathon 2020 in 24 hrs. #bringbackmyworkspace takes us back to our workspaces using spatial audio technologies.
+Experiments with real-time audio processing in an effort to bring back our workspaces https://bringbackmyworkspace.live. This was a hack built at [Arcesium](https://arcesium.com) Hackathon 2020 in 24 hrs. #bringbackmyworkspace takes us back to our workspaces using spatial audio technologies. Its a new paradigm in communication.
 
 ![bringbackmyworkspace](./virtual-room/static/img/bbmw.png)
 
@@ -13,11 +13,13 @@ Experiments with real-time audio processing in an effort to bring back our works
 - Omnitone
 - Web technologies
 
-## Features Provided
+## Demo
 
-## Architecture
+![Room creation](./virtual-room/static/img/room-creation.png)
 
-![architecture](architecture.png)
+![Live conversation](./virtual-room/static/img/live-conversation.png)
+
+![Mobility](./virtual-room/static/img/mobility.png)
 
 ## How to run locally?
 

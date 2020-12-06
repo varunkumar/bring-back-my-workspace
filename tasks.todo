@@ -9,7 +9,7 @@ Features:
   ✔ Add more layouts @done(20-12-06 05:52)
   ☐ Add support for rotating users in 3D space
   ✔ Store room information on localstorage @done(20-12-06 00:48)
-  ☐ Show user active status
+  ✔ Show user active status @done(20-12-06 06:51)
 
 Cosmetic:
   ✔ Logo @done(20-12-05 19:18)
