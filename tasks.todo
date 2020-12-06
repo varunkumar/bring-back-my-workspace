@@ -2,11 +2,11 @@ Performance:
   ☐ Compress JS
 
 Features:
-  ☐ Allow movement within the room
+  ✔ Allow movement within the room @done(20-12-06 05:52)
   ☐ Extract roomid from the URL
   ☐ Speaker indication
   ✔ User info on hover @done(20-12-06 00:17)
-  ☐ Add more layouts
+  ✔ Add more layouts @done(20-12-06 05:52)
   ☐ Add support for rotating users in 3D space
   ✔ Store room information on localstorage @done(20-12-06 00:48)
   ☐ Show user active status

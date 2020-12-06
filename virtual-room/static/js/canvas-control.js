@@ -215,6 +215,19 @@ CanvasControl.prototype._cursorDownFunc = function (event) {
 
 CanvasControl.prototype._cursorUpFunc = function (event) {
   this._cursorDown = false;
+  if (connection && this._selected.index > -1) {
+    connection.send(
+      encodeURI(
+        JSON.stringify({
+          type: 'onUserMove',
+          data: {
+            user: this._elements[this._selected.index],
+            index: this._selected.index,
+          },
+        })
+      )
+    );
+  }
   this._selected.index = -1;
   document.body.style = '';
 };

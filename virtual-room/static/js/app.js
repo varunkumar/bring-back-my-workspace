@@ -100,9 +100,8 @@ let room;
 let users = [];
 
 let backgroundImg = {
-  "id": "layout"
+  id: 'layout',
 };
-
 
 /**
  * @private
@@ -156,6 +155,7 @@ function initAudioStream(roomId, userId) {
   connection.session = {
     audio: true,
     video: false,
+    data: true,
   };
 
   connection.userid = userId;
@@ -189,6 +189,14 @@ function initAudioStream(roomId, userId) {
 
   connection.onstream = addStream;
   connection.onstreamended = removeStream;
+  connection.onmessage = function (event) {
+    const data = JSON.parse(decodeURI(event.data));
+    if (data.type === 'onUserMove') {
+      users.splice(data.data.index, 1, data.data.user);
+      canvasControl.draw();
+    }
+    console.log(`${event.userid} said: ${event.data}`);
+  };
   connection.openOrJoin(roomId, function () {
     console.log(connection.sessionid);
   });
@@ -275,7 +283,7 @@ function initAudio() {
 let onLoad = function () {
   $('#createRoomButton').on('click', function (e) {
     const roomId = $('#roomIdToCreate').val();
-    const layout = $('#roomLayout').val()
+    const layout = $('#roomLayout').val();
     room = new Room(roomId, layout, users);
     $('#rooIdToAddUsers').html(roomId);
     $('#btnCreate').hide();
@@ -332,7 +340,12 @@ let onLoad = function () {
   });
 
   let canvas = document.getElementById('canvas');
-  canvasControl = new CanvasControl(canvas, users, backgroundImg, updatePositions);
+  canvasControl = new CanvasControl(
+    canvas,
+    users,
+    backgroundImg,
+    updatePositions
+  );
 
   selectRoomProperties();
 };
