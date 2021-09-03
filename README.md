@@ -2,7 +2,7 @@
 
 # Bring back my workspace
 
-Experiments with real-time audio processing in an effort to bring back our workspaces https://bringbackmyworkspace.live. This was a hack built at [Arcesium](https://arcesium.com) Hackathon 2020 in 24 hrs. #bringbackmyworkspace takes us back to our workspaces using spatial audio technologies. Its a new paradigm in communication.
+Experiments with real-time audio processing in an effort to bring back our workspaces https://bringbackmyworkspace.live. This was a hack built at [Arcesium](https://arcesium.com) Hackathon 2020 in 24 hrs. Won "The mind boggling hackers" title for bulding the most creative hack at Arcesium Hackathon 2020. #bringbackmyworkspace takes us back to our workspaces using spatial audio technologies. Its a new paradigm in communication.
 
 ![bringbackmyworkspace](./virtual-room/static/img/bbmw.png)
 
